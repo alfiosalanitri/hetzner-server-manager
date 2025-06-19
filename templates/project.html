@@ -1,0 +1,179 @@
+{% extends 'layout.html' %}
+{% block title %}{{ project.name }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Project name: <span class="text-indigo-600 dark:text-indigo-400">{{ project.name }}</span></h1>
+</div>
+
+{% if error_message %}
+<div class="p-6 m-6 rounded-md bg-red-100 dark:bg-red-800/50 border border-red-700 text-center text-red-300">
+    <p class="font-bold">Error</p>
+    <p>{{ error_message }}</p>
+</div>
+{% elif servers %}
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    {% for server in servers %}
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg flex flex-col" 
+         x-data="{ 
+            showConfirmModal: false, 
+            modalTitle: '', 
+            modalMessage: '',
+            confirmAction: () => {} 
+         }">
+        
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700/50">
+            <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0">
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ server.server_type.name|upper }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">#{{ server.id }}</p>
+                </div>
+
+                <div class="h-12 w-px bg-gray-200 dark:bg-gray-700"></div>
+
+                <div class="flex flex-col flex-grow min-w-0">
+                    <div class="flex items-center space-x-2">
+                        <div class="relative flex items-center group">
+                            <span class="relative flex h-3 w-3">
+                                {% if server.status == 'running' %}
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                {% else %}
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                {% endif %}
+                            </span>
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-auto min-w-max p-2 text-xs text-white bg-gray-900/80 rounded-md shadow-lg transition-all scale-0 group-hover:scale-100 origin-bottom z-10">
+                                {{ server.status|capitalize }}
+                            </div>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white truncate" title="{{ server.name }}">{{ server.name }}</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2 mt-1">
+                        <svg class="h-4 w-4 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z"></path>
+                        </svg>
+                        <div x-data="{ ip: '{{ server.public_net.ipv4.ip if server.public_net.ipv4 else '' }}', copied: false }" class="flex items-center">
+                            <p @click="if (ip) { navigator.clipboard.writeText(ip); copied = true; setTimeout(() => copied = false, 2000) }" 
+                               class="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-900 dark:hover:text-white transition"
+                               title="Click to copy IP">
+                               {{ server.public_net.ipv4.ip if server.public_net.ipv4 else 'No public IPv4' }}
+                            </p>
+                            <span x-show="copied" x-cloak class="text-green-500 dark:text-green-400 text-xs ml-2 transition-opacity">Copied!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5 flex-grow">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-5 text-sm">
+                <div class="flex items-center space-x-2">
+                    <svg class="h-6 w-6 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25H7.5A2.25 2.25 0 005.25 7.5v9A2.25 2.25 0 007.5 18.75z" /></svg>
+                    <div><span class="font-semibold text-gray-800 dark:text-white">{{ server.server_type.cores }}</span> <span class="text-gray-600 dark:text-gray-300">vCPU</span></div>
+                </div>
+                <div class="flex items-center space-x-2">
+                     <svg class="h-6 w-6 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
+                    <div><span class="font-semibold text-gray-800 dark:text-white">{{ server.server_type.memory }} GB</span> <span class="text-gray-600 dark:text-gray-300">RAM</span></div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="h-6 w-6 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" /></svg>
+                    <div><span class="font-semibold text-gray-800 dark:text-white">{{ server.server_type.disk }} GB</span> <span class="text-gray-600 dark:text-gray-300">Disk</span></div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="h-6 w-6 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 7.756a4.5 4.5 0 100 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div><span class="font-semibold text-gray-800 dark:text-white">€{{ "%.2f"|format(server.server_type.prices[0].price_monthly.gross|float) }}/mo</span></div>
+                </div>
+                <div class="flex items-center space-x-2 col-span-2">
+                    <svg class="h-6 w-6 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+                    <div>
+                        {% set used_gb = server.outgoing_traffic / (1024*1024*1024) if server.outgoing_traffic else 0 %}
+                        {% set included_tb = server.included_traffic / (1024*1024*1024*1024) if server.included_traffic else 0 %}
+                        <span class="font-semibold text-gray-800 dark:text-white">{{ "%.2f"|format(used_gb) }} GB of {{ "%.0f"|format(included_tb) }} TB</span><span class="text-gray-600 dark:text-gray-300"> Traffic Out</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700/50 p-4 rounded-b-lg">
+            <div x-data="{ loading: false }" class="flex justify-end space-x-3">
+                {% if server.status == 'off' %}
+                <form id="poweron-form-{{server.id}}"
+                      @submit="loading = true"
+                      action="{{ url_for('server_action', project_id=project.id, server_id=server.id, action='poweron') }}"
+                      method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="button"
+                          @click="modalTitle='Confirm Power On';
+                                  modalMessage='Are you sure you want to power on \'{{ server.name|e }}\'?';
+                                  confirmAction = () => { loading = true; document.getElementById('poweron-form-{{server.id}}').submit(); };
+                                  showConfirmModal=true;"
+                          :disabled="loading"
+                          class="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-green-500 transition disabled:opacity-50">
+                    <span x-show="!loading" class="flex"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM10.6219 8.41459L15.5008 11.6672C15.6846 11.7897 15.7343 12.0381 15.6117 12.2219C15.5824 12.2658 15.5447 12.3035 15.5008 12.3328L10.6219 15.5854C10.4381 15.708 10.1897 15.6583 10.0672 15.4745C10.0234 15.4088 10 15.3316 10 15.2526V8.74741C10 8.52649 10.1791 8.34741 10.4 8.34741C10.479 8.34741 10.5562 8.37078 10.6219 8.41459Z"></path></svg> <span class="ms-2 inline-block">Power On</span></span>
+                    <span x-show="loading">Starting...</span>
+                  </button>
+                </form>
+                {% endif %}
+              
+                {% if server.status == 'running' %}
+                <form id="shutdown-form-{{server.id}}"
+                      @submit="loading = true"
+                      action="{{ url_for('server_action', project_id=project.id, server_id=server.id, action='shutdown') }}"
+                      method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="button"
+                          @click="modalTitle='Confirm Shutdown';
+                                  modalMessage='Are you sure you want to shutdown \'{{ server.name|e }}\'?';
+                                  confirmAction = () => { loading = true; document.getElementById('shutdown-form-{{server.id}}').submit(); };
+                                  showConfirmModal=true;"
+                          :disabled="loading"
+                          class="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-500 transition disabled:opacity-50">
+                    <span x-show="!loading" class="flex"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.26489 3.80698L7.41191 5.44558C5.34875 6.89247 4 9.28873 4 12C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12C20 9.28873 18.6512 6.89247 16.5881 5.44558L17.7351 3.80698C20.3141 5.61559 22 8.61091 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 8.61091 3.68594 5.61559 6.26489 3.80698ZM11 12V2H13V12H11Z"></path></svg> <span class="inline-block ms-2">Shutdown</span></span>
+                    <span x-show="loading">Shutting down...</span>
+                  </button>
+                </form>
+              
+                <form id="reboot-form-{{server.id}}"
+                      @submit="loading = true"
+                      action="{{ url_for('server_action', project_id=project.id, server_id=server.id, action='reboot') }}"
+                      method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="button"
+                          @click="modalTitle='Confirm Reboot';
+                                  modalMessage='Are you sure you want to reboot \'{{ server.name|e }}\'?';
+                                  confirmAction = () => { loading = true; document.getElementById('reboot-form-{{server.id}}').submit(); };
+                                  showConfirmModal=true;"
+                          :disabled="loading"
+                          class="w-full px-4 py-2 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-yellow-500 transition disabled:opacity-20">
+                    <span x-show="!loading" class="flex"><svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM16.8201 17.0761C18.1628 15.8007 19 13.9981 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C13.0609 19 14.0666 18.764 14.9676 18.3417L13.9928 16.5871C13.3823 16.8527 12.7083 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12H14L16.8201 17.0761Z"></path></svg> <span class="inline-block ms-2">Reboot</span></span>
+                    <span x-show="loading">Rebooting...</span>
+                  </button>
+                </form>
+                {% endif %}
+              </div>                       
+        </div>
+
+        <div x-show="showConfirmModal" x-cloak class="fixed inset-0 z-30 flex items-center justify-center bg-gray-900 bg-opacity-75" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div @click.away="showConfirmModal = false" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-xl overflow-hidden w-full max-w-md" x-show="showConfirmModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600"><h3 class="text-lg font-medium leading-6" x-text="modalTitle"></h3></div>
+                <div class="p-6"><p x-text="modalMessage"></p></div>
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 flex justify-end space-x-3">
+                    <button type="button" @click="showConfirmModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 hover:bg-gray-100 dark:hover:bg-gray-500 border border-gray-300 dark:border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
+                    <button type="button" @click="confirmAction(); showConfirmModal = false;" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    {% if not error_message %}
+    <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-700 dark:text-white">No servers</h3>
+        <p class="mt-1 text-sm text-gray-500">No servers were found in this project.</p>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

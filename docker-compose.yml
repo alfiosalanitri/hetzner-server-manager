@@ -1,0 +1,11 @@
+services:
+  web:
+    image: ghcr.io/alfiosalanitri/hetzner-server-manager:latest
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data/instance:/app/instance
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -1,0 +1,8 @@
+Flask==3.1.1
+python-dotenv==1.1.0
+hcloud==2.5.3
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.1.0
+Flask-WTF==1.2.2
+cryptography==45.0.4
+gunicorn==23.0.0
