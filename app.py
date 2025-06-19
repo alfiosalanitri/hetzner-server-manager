@@ -1,19 +1,19 @@
 import os
-from flask import Flask, render_template, redirect, url_for, flash, abort
 from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+from flask import Flask, render_template, redirect, url_for, flash, abort
 from hcloud import Client, APIException
 from typing import cast, List
 from models import Server
-
 from models import db, Project
 from forms import AddProjectForm
 from utils import encrypt_token, decrypt_token
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.middleware.proxy_fix import ProxyFix
-
-# Load environment variables
-load_dotenv()
 
 # App Configuration
 app = Flask(__name__)
