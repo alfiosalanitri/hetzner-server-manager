@@ -16,3 +16,6 @@ node_modules/
 .DS_Store
 .idea/
 .vscode/
+
+# Db data
+data
