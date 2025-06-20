@@ -172,6 +172,8 @@ vim .env
 
 Add your `SECRET_ENCRYPTION_KEY`, `SECRET_KEY` and `FLASK_DEBUG=false`.
 
+💡 Tip: You can generate a valid `SECRET_ENCRYPTION_KEY` using [https://fernetkeygen.com](https://fernetkeygen.com)
+
 2. **Create the docker-compose.yml file:** 
 
 ```bash
