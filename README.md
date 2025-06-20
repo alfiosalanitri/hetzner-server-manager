@@ -80,7 +80,7 @@ Paste the key into `.env` under `SECRET_ENCRYPTION_KEY`.
 6. **Generate a secret key:**
 
 ```bash
-python -c "import secrets; print(secrets.token_urlsafe(32))
+python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
 Paste the key into `.env` under `SECRET_KEY`.
