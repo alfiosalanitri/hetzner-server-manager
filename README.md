@@ -59,7 +59,7 @@ cp .env.example .env
 3. **Create and activate a Python virtual environment:**
 
 ```bash
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
@@ -69,27 +69,39 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-5. **Generate a secret key:**
+5. **Generate a secret encryption key:**
 
 ```bash
-python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
 Paste the key into `.env` under `SECRET_ENCRYPTION_KEY`.
 
-6. **Install Node.js dependencies:**
+6. **Generate a secret key:**
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))
+```
+
+Paste the key into `.env` under `SECRET_KEY`.
+
+7. **Enable Debug Mode:**
+
+Set Debug mode to true into `.env` under `FLASK_DEBUG`.
+
+8. **Install Node.js dependencies:**
 
 ```bash
 npm install
 ```
 
-7. **Initialize the database:**
+9. **Initialize the database:**
 
 ```bash
 flask db upgrade
 ```
 
-8. **Run the application:**
+10. **Run the application:**
 
 Open two terminals:
 
@@ -105,7 +117,7 @@ npm run dev
 python ./app.py
 ```
 
-9. **Access the app:**
+11. **Access the app:**
 
 Navigate to [http://localhost:5000](http://localhost:5000) 🌐
 
@@ -154,7 +166,7 @@ If you want to deploy the app in **production**, you can use the prebuilt Docker
 cp .env.example .env
 ```
 
-Add your `SECRET_ENCRYPTION_KEY`.
+Add your `SECRET_ENCRYPTION_KEY`, `SECRET_KEY` and `FLASK_DEBUG=false`.
 
 2. **Run the container:**
 
@@ -187,6 +199,10 @@ The following variable is required in your `.env` file:
 * `SECRET_ENCRYPTION_KEY`: Used to encrypt and decrypt Hetzner API tokens. 🔑
 
 > ⚠️ If you lose this key, previously saved projects will become inaccessible.
+
+* `SECRET_KEY`: Used for securely signing session cookies and other cryptographic operations.
+
+* `FLASK_DEBUG`: Enable or disable Flask debug mode.
 
 ---
 
