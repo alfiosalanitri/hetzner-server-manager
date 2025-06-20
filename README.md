@@ -158,7 +158,11 @@ If you want to deploy the app in **production**, you can use the prebuilt Docker
 * [Docker](https://docs.docker.com/get-docker/) 🐳
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Steps 🏗️
+### Steps (use the pre built image) 🏗️
+
+```text
+ghcr.io/alfiosalanitri/hetzner-server-manager:latest
+```
 
 1. **Create your `.env` file:**
 
@@ -168,25 +172,42 @@ cp .env.example .env
 
 Add your `SECRET_ENCRYPTION_KEY`, `SECRET_KEY` and `FLASK_DEBUG=false`.
 
-2. **Run the container:**
+2. **Create the docker-compose.yml file:** 
 
-Using the prebuilt image:
+```bash
+services:
+  web:
+    image: ghcr.io/alfiosalanitri/hetzner-server-manager:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data/instance:/app/instance
+    env_file:
+      - .env
+    restart: unless-stopped
+```
+
+3. **Run the container:**
 
 ```bash
 docker compose up -d
 ```
+---
 
-or build it locally:
+### Steps (create your image) 🏗️
+
+1. **Clone this repository:**
+
+```bash
+git clone https://github.com/alfiosalanitri/hetzner-server-manager.git
+```
+
+2. **Run the container:**
 
 ```bash
 docker compose up --build -d
 ```
-
-### Image 📦
-
-```text
-ghcr.io/alfiosalanitri/hetzner-server-manager:latest
-```
+---
 
 The app will be available at [http://localhost:5000](http://localhost:5000) 🌐
 
