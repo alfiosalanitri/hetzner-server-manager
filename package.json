@@ -1,6 +1,6 @@
 {
   "name": "hetzner-server-manager",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A web app to manage Hetzner servers.",
   "scripts": {
     "dev": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch",
