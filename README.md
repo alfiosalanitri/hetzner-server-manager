@@ -164,10 +164,10 @@ If you want to deploy the app in **production**, you can use the prebuilt Docker
 ghcr.io/alfiosalanitri/hetzner-server-manager:latest
 ```
 
-1. **Create your `.env` file:**
+1. **Create and edit your `.env` file:**
 
 ```bash
-cp .env.example .env
+vim .env
 ```
 
 Add your `SECRET_ENCRYPTION_KEY`, `SECRET_KEY` and `FLASK_DEBUG=false`.
@@ -201,8 +201,13 @@ docker compose up -d
 ```bash
 git clone https://github.com/alfiosalanitri/hetzner-server-manager.git
 ```
+2. **Create and edit your `.env` file:**
 
-2. **Run the container:**
+```bash
+co .env.example .env
+```
+
+3. **Run the container:**
 
 ```bash
 docker compose up --build -d
