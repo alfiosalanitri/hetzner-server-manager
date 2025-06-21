@@ -220,6 +220,20 @@ The app will be available at [http://localhost:5000](http://localhost:5000) 🌐
 
 ---
 
+## ✅ Docker Image Compatibility
+
+The Docker image has been successfully tested on the following platforms:
+
+| Platform        | Architecture | Status   |
+| --------------- | ------------ | -------- |
+| Arch Linux      | x86\_64      | ✅ Tested |
+| Ubuntu 22.04+   | x86\_64      | ✅ Tested |
+| Raspberry Pi OS | ARMv7/ARM64  | ✅ Tested |
+
+> ℹ️ If you encounter issues running the container on other systems, feel free to open an issue.
+
+---
+
 ## 🔐 Environment Variables
 
 The following variable is required in your `.env` file:
