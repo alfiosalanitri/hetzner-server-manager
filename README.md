@@ -72,7 +72,7 @@ pip install -r requirements.txt
 5. **Generate a secret encryption key:**
 
 ```bash
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+docker run --rm ghcr.io/alfiosalanitri/docker-fernet-key-generator:latest
 ```
 
 Paste the key into `.env` under `SECRET_ENCRYPTION_KEY`.
