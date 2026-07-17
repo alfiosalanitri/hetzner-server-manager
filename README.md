@@ -246,6 +246,10 @@ The following variable is required in your `.env` file:
 
 * `FLASK_DEBUG`: Enable or disable Flask debug mode.
 
+* `SESSION_COOKIE_SECURE`: Whether the session cookie requires HTTPS to be sent by the browser. Defaults to `true`.
+
+> ⚠️ If you access the app over **plain HTTP** (e.g. `http://server-ip:5000`, with no reverse proxy/TLS in front of it), keep this default `true` and you will get a **"Bad Request: The CSRF session token is missing"** error when submitting forms, because browsers refuse to send secure cookies over an unencrypted connection. Set `SESSION_COOKIE_SECURE=false` in your `.env` to fix it in that case. Only disable it if you understand the security trade-off (the session cookie will then be sent unencrypted) — prefer adding HTTPS via a reverse proxy instead when possible.
+
 ---
 
 ## ⚠️ Security & Access Warning
